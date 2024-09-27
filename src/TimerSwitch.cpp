@@ -12,10 +12,10 @@ TimerSwitch::TimerSwitch(ESP32Time* RTC, int Pin, String configFile) : GenericOu
 /// @return True on success
 bool TimerSwitch::begin() {
 	// Set description
-	Description.signalQuantity = 1;
+	Description.actionQuantity = 1;
 	Description.type = "output";
 	Description.name = "Timer Switch";
-	Description.signals = {{"state", 0}};
+	Description.actions = {{"state", 0}};
 	Description.id = 0;
 	bool result = false;
 	TaskDescription = { .taskName = "Timer Switch", .taskPeriod = 30000 };
