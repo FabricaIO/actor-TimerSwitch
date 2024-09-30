@@ -20,9 +20,6 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 
 		/// @brief Timer Switch configuration
 		struct {
-			/// @brief The pin number attached to the output
-			int pin;
-
 			/// @brief The name of this output
 			String name;
 			
@@ -55,7 +52,7 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 		int off_minute;
 
 	public:
-		TimerSwitch(ESP32Time* RTC, int Pin, String configFile = "TimerSwitch.json");
+		TimerSwitch(ESP32Time* RTC, int Pin, String ConfigFile = "TimerSwitch.json");
 		bool begin();
 		String getConfig();
 		bool setConfig(String config );

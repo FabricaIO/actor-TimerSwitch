@@ -3,8 +3,8 @@
 /// @brief Creates a new TimerSwitch
 /// @param RTC A pointer to a ESP32Time object to use
 /// @param Pin Pin to use
-/// @param configFile The name of the config file to use
-TimerSwitch::TimerSwitch(ESP32Time* RTC, int Pin, String configFile) : GenericOutput(Pin, configFile) {
+/// @param ConfigFile The name of the config file to use
+TimerSwitch::TimerSwitch(ESP32Time* RTC, int Pin, String ConfigFile) : GenericOutput(Pin, ConfigFile) {
 	rtc = RTC;
 }
 
@@ -22,7 +22,7 @@ bool TimerSwitch::begin() {
 	// Create settings directory if necessary
 	if (!checkConfig(config_path)) {
 		// Set defaults
-		return setConfig(R"({"pin":)" + String(current_config.pin) + R"(, "name": "Timer Switch", "onTime": "9:30", "offTime": "22:15", "enabled": false, "active": "Active high"})");
+		return setConfig(R"({"pin":)" + String(output_config.Pin) + R"(, "name": "Timer Switch", "onTime": "9:30", "offTime": "22:15", "enabled": false, "active": "Active high"})");
 	} else {
 		// Load settings
 		return setConfig(Storage::readFile(config_path));
@@ -35,7 +35,7 @@ String TimerSwitch::getConfig() {
 	// Allocate the JSON document
 	JsonDocument doc;
 	// Assign current values
-	doc["pin"] = current_config.pin;
+	doc["Pin"] = output_config.Pin;
 	doc["name"] = current_config.name;
 	doc["onTime"] = current_config.onTime;
 	doc["offTime"] = current_config.offTime;
@@ -70,7 +70,7 @@ bool TimerSwitch::setConfig(String config) {
 		return false;
 	}
 	// Assign loaded values
-	current_config.pin = doc["pin"].as<int>();
+	output_config.Pin = doc["Pin"].as<int>();
 	current_config.name = doc["name"].as<String>();
 	current_config.onTime = doc["onTime"].as<String>();
 	current_config.offTime = doc["offTime"].as<String>();
@@ -98,16 +98,16 @@ void TimerSwitch::runTask(long elapsed) {
 		totalElapsed = 0;
 		int cur_hour = rtc->getHour(true);
 		int cur_min = rtc->getMinute();
-		int cur_state = digitalRead(current_config.pin);
+		int cur_state = digitalRead(output_config.Pin);
 		if (cur_state != states[current_config.active] && cur_hour == on_hour) {
 			if (cur_min == on_minute) {
 				Serial.println("Timer switch turning on");
-				digitalWrite(current_config.pin, states[current_config.active]);
+				digitalWrite(output_config.Pin, states[current_config.active]);
 			}
 		} else if (cur_state == states[current_config.active] && cur_hour == off_hour) {
 			if (cur_min == off_minute) {
 				Serial.println("Timer switch turning off");
-				digitalWrite(current_config.pin, !states[current_config.active]);
+				digitalWrite(output_config.Pin, !states[current_config.active]);
 			}
 		}
 	}
