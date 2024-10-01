@@ -14,7 +14,7 @@
 
 /// @brief A class to control an output (switch) on a timer
 class TimerSwitch : public GenericOutput, public PeriodicTask {
-	private:
+	protected:
 		/// @brief Describes available button active states
 		std::unordered_map<std::string, int> states = {{"Active low", LOW}, {"Active high", HIGH}};
 
@@ -34,7 +34,7 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 
 			/// @brief The active states of the button
 			std::string active;
-		} current_config;
+		} add_config;
 
 		/// @brief A pointer to the time object to use
 		ESP32Time* rtc;
@@ -51,10 +51,12 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 		/// @brief The minute of hte hour which the timer should turn off
 		int off_minute;
 
+		JsonDocument addAdditionalConfig();
+
 	public:
 		TimerSwitch(ESP32Time* RTC, int Pin, String ConfigFile = "TimerSwitch.json");
 		bool begin();
 		String getConfig();
-		bool setConfig(String config );
+		bool setConfig(String config, bool save);
 		void runTask(long elapsed);	
 };
