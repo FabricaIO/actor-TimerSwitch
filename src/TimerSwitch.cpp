@@ -55,8 +55,8 @@ bool TimerSwitch::setConfig(String config, bool save) {
 		DeserializationError error = deserializeJson(doc, config);
 		// Test if parsing succeeds.
 		if (error) {
-			Serial.print(F("Deserialization failed: "));
-			Serial.println(error.f_str());
+			Logger.print(F("Deserialization failed: "));
+			Logger.println(error.f_str());
 			return false;
 		}
 		// Disable task in case name changed
@@ -95,12 +95,12 @@ void TimerSwitch::runTask(long elapsed) {
 		int cur_state = digitalRead(output_config.Pin);
 		if (cur_state != states[add_config.active] && cur_hour == on_hour) {
 			if (cur_min == on_minute) {
-				Serial.println("Timer switch turning on");
+				Logger.println("Timer switch turning on");
 				digitalWrite(output_config.Pin, states[add_config.active]);
 			}
 		} else if (cur_state == states[add_config.active] && cur_hour == off_hour) {
 			if (cur_min == off_minute) {
-				Serial.println("Timer switch turning off");
+				Logger.println("Timer switch turning off");
 				digitalWrite(output_config.Pin, !states[add_config.active]);
 			}
 		}
@@ -116,8 +116,8 @@ JsonDocument TimerSwitch::addAdditionalConfig() {
 	DeserializationError error = deserializeJson(doc, GenericOutput::getConfig());
 	// Test if parsing succeeds.
 	if (error) {
-		Serial.print(F("Deserialization failed: "));
-		Serial.println(error.f_str());
+		Logger.print(F("Deserialization failed: "));
+		Logger.println(error.f_str());
 		return doc;
 	}
 	doc["name"] = add_config.name;
