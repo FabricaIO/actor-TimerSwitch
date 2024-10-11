@@ -1,12 +1,9 @@
 #include "TimerSwitch.h"
 
 /// @brief Creates a new TimerSwitch
-/// @param RTC A pointer to a ESP32Time object to use
 /// @param Pin Pin to use
 /// @param ConfigFile The name of the config file to use
-TimerSwitch::TimerSwitch(ESP32Time* RTC, int Pin, String ConfigFile) : GenericOutput(Pin, ConfigFile) {
-	rtc = RTC;
-}
+TimerSwitch::TimerSwitch(int Pin, String ConfigFile) : GenericOutput(Pin, ConfigFile) {}
 
 /// @brief Starts a timer switch 
 /// @return True on success
@@ -90,8 +87,8 @@ bool TimerSwitch::setConfig(String config, bool save) {
 /// @param elapsed The time in ms since this task was last called
 void TimerSwitch::runTask(long elapsed) {
 	if (add_config.enabled && taskPeriodTriggered(elapsed)) {
-		int cur_hour = rtc->getHour(true);
-		int cur_min = rtc->getMinute();
+		int cur_hour = TimeInterface::getFormattedTime("%H").toInt();
+		int cur_min = TimeInterface::getFormattedTime("%M").toInt();
 		int cur_state = digitalRead(output_config.Pin);
 		if (cur_state != states[add_config.active] && cur_hour == on_hour) {
 			if (cur_min == on_minute) {

@@ -1,8 +1,5 @@
 /*
 * This file and associated .cpp file are licensed under the GPLv3 License Copyright (c) 2024 Sam Groveman
-* 
-* ESP32Time: https://github.com/fbiego/ESP32Time
-*
 * Contributors: Sam Groveman
 */
 
@@ -10,7 +7,7 @@
 #include <Arduino.h>
 #include <GenericOutput.h>
 #include <PeriodicTask.h>
-#include <ESP32Time.h>
+#include <TimeInterface.h>
 
 /// @brief A class to control an output (switch) on a timer
 class TimerSwitch : public GenericOutput, public PeriodicTask {
@@ -36,9 +33,6 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 			std::string active;
 		} add_config;
 
-		/// @brief A pointer to the time object to use
-		ESP32Time* rtc;
-
 		/// @brief The hour which the timer should turn on
 		int on_hour;
 
@@ -54,7 +48,7 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 		JsonDocument addAdditionalConfig();
 
 	public:
-		TimerSwitch(ESP32Time* RTC, int Pin, String ConfigFile = "TimerSwitch.json");
+		TimerSwitch(int Pin, String ConfigFile = "TimerSwitch.json");
 		bool begin();
 		String getConfig();
 		bool setConfig(String config, bool save);
