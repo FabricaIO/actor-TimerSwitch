@@ -15,10 +15,16 @@ bool TimerSwitch::begin() {
 		Description.type = "output";
 		Description.name = "Timer Switch";
 		Description.actions = {{"state", 0}};
-		Description.id = 0;
 		if (!configExists) {
-			// Set defaults
-			return setConfig(R"({"pin":)" + String(output_config.Pin) + R"(, "name": "Timer Switch", "onTime": "9:30", "offTime": "22:15", "enabled": false, "active": "Active high"})", true);
+			// Set defaults 
+			task_config.taskName = "Timer Switch";
+			task_config.taskPeriod = 1000;
+			add_config.name = "Timer Switch";
+			add_config.onTime = "9:30";
+			add_config.offTime = "22:15";
+			add_config.enabled = false;
+			add_config.active = "Active High";
+			return setConfig(getConfig(), true);
 		} else {
 			// Load settings
 			return setConfig(Storage::readFile(config_path), false);
@@ -66,6 +72,8 @@ bool TimerSwitch::setConfig(String config, bool save) {
 		add_config.offTime = doc["offTime"].as<String>();
 		add_config.enabled = doc["enabled"].as<bool>();
 		add_config.active = doc["active"]["current"].as<std::string>();
+		task_config.taskName = doc["taskName"].as<std::string>();
+		task_config.taskPeriod = doc["taskPeriod"].as<long>();
 
 		Description.name = add_config.name;
 		task_config.taskName = add_config.name.c_str();
@@ -124,5 +132,7 @@ JsonDocument TimerSwitch::addAdditionalConfig() {
 	doc["active"]["current"] =  add_config.active;
 	doc["active"]["options"][0] = "Active low";
 	doc["active"]["options"][1] = "Active high";
+	doc["taskName"] = task_config.taskName;
+	doc["taskPeriod"] = task_config.taskPeriod;
 	return doc;
 }
