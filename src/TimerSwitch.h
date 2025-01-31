@@ -31,7 +31,7 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 
 			/// @brief The active states of the button
 			std::string active;
-		} add_config;
+		} timer_config;
 
 		/// @brief The hour which the timer should turn on
 		int on_hour;

@@ -19,11 +19,11 @@ bool TimerSwitch::begin() {
 			// Set defaults 
 			task_config.taskName = "Timer Switch";
 			task_config.taskPeriod = 1000;
-			add_config.name = "Timer Switch";
-			add_config.onTime = "9:30";
-			add_config.offTime = "22:15";
-			add_config.enabled = false;
-			add_config.active = "Active High";
+			timer_config.name = "Timer Switch";
+			timer_config.onTime = "9:30";
+			timer_config.offTime = "22:15";
+			timer_config.enabled = false;
+			timer_config.active = "Active High";
 			return setConfig(getConfig(), true);
 		} else {
 			// Load settings
@@ -67,26 +67,26 @@ bool TimerSwitch::setConfig(String config, bool save) {
 			return false;
 		}
 		// Assign loaded values
-		add_config.name = doc["name"].as<String>();
-		add_config.onTime = doc["onTime"].as<String>();
-		add_config.offTime = doc["offTime"].as<String>();
-		add_config.enabled = doc["enabled"].as<bool>();
-		add_config.active = doc["active"]["current"].as<std::string>();
+		timer_config.name = doc["name"].as<String>();
+		timer_config.onTime = doc["onTime"].as<String>();
+		timer_config.offTime = doc["offTime"].as<String>();
+		timer_config.enabled = doc["enabled"].as<bool>();
+		timer_config.active = doc["active"]["current"].as<std::string>();
 		task_config.taskName = doc["taskName"].as<std::string>();
 		task_config.taskPeriod = doc["taskPeriod"].as<long>();
 
-		Description.name = add_config.name;
-		task_config.taskName = add_config.name.c_str();
-		on_hour = add_config.onTime.substring(0, add_config.onTime.indexOf(':')).toInt();
-		on_minute = add_config.onTime.substring(add_config.onTime.indexOf(':') + 1).toInt();
-		off_hour = add_config.offTime.substring(0, add_config.offTime.indexOf(':')).toInt();
-		off_minute = add_config.offTime.substring(add_config.offTime.indexOf(':') + 1).toInt();
+		Description.name = timer_config.name;
+		task_config.taskName = timer_config.name.c_str();
+		on_hour = timer_config.onTime.substring(0, timer_config.onTime.indexOf(':')).toInt();
+		on_minute = timer_config.onTime.substring(timer_config.onTime.indexOf(':') + 1).toInt();
+		off_hour = timer_config.offTime.substring(0, timer_config.offTime.indexOf(':')).toInt();
+		off_minute = timer_config.offTime.substring(timer_config.offTime.indexOf(':') + 1).toInt();
 		if (save) {
 			if (!saveConfig(config_path, getConfig())) {
 				return false;
 			}
 		}
-		return enableTask(add_config.enabled) && configureOutput();
+		return enableTask(timer_config.enabled) && configureOutput();
 		}
 	return false;
 }
@@ -94,20 +94,16 @@ bool TimerSwitch::setConfig(String config, bool save) {
 /// @brief Checks the time to see if the timer has triggered
 /// @param elapsed The time in ms since this task was last called
 void TimerSwitch::runTask(long elapsed) {
-	if (add_config.enabled && taskPeriodTriggered(elapsed)) {
+	if (timer_config.enabled && taskPeriodTriggered(elapsed)) {
 		int cur_hour = TimeInterface::getFormattedTime("%H").toInt();
 		int cur_min = TimeInterface::getFormattedTime("%M").toInt();
 		int cur_state = digitalRead(output_config.Pin);
-		if (cur_state != states[add_config.active] && cur_hour == on_hour) {
-			if (cur_min == on_minute) {
-				Logger.println("Timer switch turning on");
-				digitalWrite(output_config.Pin, states[add_config.active]);
-			}
-		} else if (cur_state == states[add_config.active] && cur_hour == off_hour) {
-			if (cur_min == off_minute) {
-				Logger.println("Timer switch turning off");
-				digitalWrite(output_config.Pin, !states[add_config.active]);
-			}
+		if (cur_state != states[timer_config.active] && cur_hour == on_hour && cur_min == on_minute) {
+			Logger.println("Timer switch turning on");
+			digitalWrite(output_config.Pin, states[timer_config.active]);
+		} else if (cur_state == states[timer_config.active] && cur_hour == off_hour && cur_min == off_minute) {
+			Logger.println("Timer switch turning off");
+			digitalWrite(output_config.Pin, !states[timer_config.active]);
 		}
 	}
 }
@@ -125,11 +121,11 @@ JsonDocument TimerSwitch::addAdditionalConfig() {
 		Logger.println(error.f_str());
 		return doc;
 	}
-	doc["name"] = add_config.name;
-	doc["onTime"] = add_config.onTime;
-	doc["offTime"] = add_config.offTime;
-	doc["enabled"] = add_config.enabled;
-	doc["active"]["current"] =  add_config.active;
+	doc["name"] = timer_config.name;
+	doc["onTime"] = timer_config.onTime;
+	doc["offTime"] = timer_config.offTime;
+	doc["enabled"] = timer_config.enabled;
+	doc["active"]["current"] =  timer_config.active;
 	doc["active"]["options"][0] = "Active low";
 	doc["active"]["options"][1] = "Active high";
 	doc["taskName"] = task_config.taskName;
