@@ -25,7 +25,7 @@
 	"fabrica-io" : {
 		"name": "reset",
 		"type": 1,
-		"category": "button",
+		"category": "output",
 		"libname": "ResetButton",
 		"includes": ["ResetButton"],
 		"description": "Uses a button or input to reset and wipe all settings on device",
