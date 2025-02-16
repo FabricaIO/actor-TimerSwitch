@@ -1,5 +1,5 @@
 {
-	"name": "Fabrica-IO Actor Timer Switch",
+	"name": "actor-TimerSwitch",
 	"version": "0.5.0",
 	"description": "Activates a GPIO output on a timer schedule",
 	"keywords": "Fabrica-IO, actor, output, switch",
