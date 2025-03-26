@@ -19,7 +19,7 @@ bool TimerSwitch::begin() {
 			// Set defaults 
 			task_config.taskName = "Timer Switch";
 			task_config.taskPeriod = 1000;
-			timer_config.name = "Timer Switch";
+			timer_config.outputName = "Timer Switch";
 			timer_config.onTime = "9:30";
 			timer_config.offTime = "22:15";
 			timer_config.enabled = false;
@@ -67,7 +67,8 @@ bool TimerSwitch::setConfig(String config, bool save) {
 			return false;
 		}
 		// Assign loaded values
-		timer_config.name = doc["name"].as<String>();
+		Description.name = doc["Name"].as<String>();
+		timer_config.outputName = doc["outputName"].as<String>();
 		timer_config.onTime = doc["onTime"].as<String>();
 		timer_config.offTime = doc["offTime"].as<String>();
 		timer_config.enabled = doc["enabled"].as<bool>();
@@ -75,8 +76,8 @@ bool TimerSwitch::setConfig(String config, bool save) {
 		task_config.taskName = doc["taskName"].as<std::string>();
 		task_config.taskPeriod = doc["taskPeriod"].as<long>();
 
-		Description.name = timer_config.name;
-		task_config.taskName = timer_config.name.c_str();
+		Description.name = timer_config.outputName;
+		task_config.taskName = timer_config.outputName.c_str();
 		on_hour = timer_config.onTime.substring(0, timer_config.onTime.indexOf(':')).toInt();
 		on_minute = timer_config.onTime.substring(timer_config.onTime.indexOf(':') + 1).toInt();
 		off_hour = timer_config.offTime.substring(0, timer_config.offTime.indexOf(':')).toInt();
@@ -121,7 +122,8 @@ JsonDocument TimerSwitch::addAdditionalConfig() {
 		Logger.println(error.f_str());
 		return doc;
 	}
-	doc["name"] = timer_config.name;
+	doc["Name"] = Description.name;
+	doc["outputName"] = timer_config.outputName;
 	doc["onTime"] = timer_config.onTime;
 	doc["offTime"] = timer_config.offTime;
 	doc["enabled"] = timer_config.enabled;
