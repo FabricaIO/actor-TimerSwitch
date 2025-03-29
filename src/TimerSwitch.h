@@ -48,7 +48,7 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 		JsonDocument addAdditionalConfig();
 
 	public:
-		TimerSwitch(int Pin, String ConfigFile = "TimerSwitch.json");
+		TimerSwitch(String Name, int Pin, String ConfigFile = "TimerSwitch.json");
 		bool begin();
 		String getConfig();
 		bool setConfig(String config, bool save);

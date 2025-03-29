@@ -1,9 +1,10 @@
 #include "TimerSwitch.h"
 
 /// @brief Creates a new TimerSwitch
+/// @param Name The device name 
 /// @param Pin Pin to use
 /// @param ConfigFile The name of the config file to use
-TimerSwitch::TimerSwitch(int Pin, String ConfigFile) : GenericOutput(Pin, ConfigFile) {}
+TimerSwitch::TimerSwitch(String Name, int Pin, String ConfigFile) : GenericOutput(Name, Pin, ConfigFile) {}
 
 /// @brief Starts a timer switch 
 /// @return True on success
@@ -13,7 +14,6 @@ bool TimerSwitch::begin() {
 	if (GenericOutput::begin()) {
 		// Set description
 		Description.type = "output";
-		Description.name = "Timer Switch";
 		Description.actions = {{"state", 0}};
 		if (!configExists) {
 			// Set defaults 
