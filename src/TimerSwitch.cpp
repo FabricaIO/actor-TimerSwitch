@@ -10,16 +10,14 @@ TimerSwitch::TimerSwitch(String Name, int Pin, String ConfigFile) : GenericOutpu
 /// @return True on success
 bool TimerSwitch::begin() {
 	bool configExists = checkConfig(config_path);
-	task_config = { .taskName = "Timer Switch", .taskPeriod = 30000 };
 	if (GenericOutput::begin()) {
 		// Set description
 		Description.type = "output";
 		Description.actions = {{"state", 0}};
 		if (!configExists) {
 			// Set defaults 
-			task_config.taskName = "Timer Switch";
+			task_config.set_taskName(Description.name.c_str());
 			task_config.taskPeriod = 1000;
-			timer_config.outputName = "Timer Switch";
 			timer_config.onTime = "9:30";
 			timer_config.offTime = "22:15";
 			timer_config.enabled = false;
@@ -62,22 +60,15 @@ bool TimerSwitch::setConfig(String config, bool save) {
 			Logger.println(error.f_str());
 			return false;
 		}
-		// Disable task in case name changed
-		if (!enableTask(false)) {
-			return false;
-		}
 		// Assign loaded values
 		Description.name = doc["Name"].as<String>();
-		timer_config.outputName = doc["outputName"].as<String>();
 		timer_config.onTime = doc["onTime"].as<String>();
 		timer_config.offTime = doc["offTime"].as<String>();
 		timer_config.enabled = doc["enabled"].as<bool>();
 		timer_config.active = doc["active"]["current"].as<std::string>();
-		task_config.taskName = doc["taskName"].as<std::string>();
+		task_config.set_taskName(Description.name.c_str());
 		task_config.taskPeriod = doc["taskPeriod"].as<long>();
 
-		Description.name = timer_config.outputName;
-		task_config.taskName = timer_config.outputName.c_str();
 		on_hour = timer_config.onTime.substring(0, timer_config.onTime.indexOf(':')).toInt();
 		on_minute = timer_config.onTime.substring(timer_config.onTime.indexOf(':') + 1).toInt();
 		off_hour = timer_config.offTime.substring(0, timer_config.offTime.indexOf(':')).toInt();
@@ -123,14 +114,12 @@ JsonDocument TimerSwitch::addAdditionalConfig() {
 		return doc;
 	}
 	doc["Name"] = Description.name;
-	doc["outputName"] = timer_config.outputName;
 	doc["onTime"] = timer_config.onTime;
 	doc["offTime"] = timer_config.offTime;
 	doc["enabled"] = timer_config.enabled;
 	doc["active"]["current"] =  timer_config.active;
 	doc["active"]["options"][0] = "Active low";
 	doc["active"]["options"][1] = "Active high";
-	doc["taskName"] = task_config.taskName;
 	doc["taskPeriod"] = task_config.taskPeriod;
 	return doc;
 }

@@ -17,9 +17,6 @@ class TimerSwitch : public GenericOutput, public PeriodicTask {
 
 		/// @brief Timer Switch configuration
 		struct {
-			/// @brief The name of this output
-			String outputName;
-			
 			/// @brief The time at which the switch will turn on
 			String onTime;
 
