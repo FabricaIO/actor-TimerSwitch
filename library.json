@@ -23,12 +23,12 @@
 	"frameworks": "arduino",
 	"platforms": "*",
 	"fabricaio" : {
-		"name": "reset",
+		"name": "Timer",
 		"type": 1,
 		"category": "output",
-		"libname": "ResetButton",
-		"includes": ["ResetButton"],
-		"description": "Uses a button or input to reset and wipe all settings on device",
+		"libname": "TimerSwitch",
+		"includes": ["TimerSwitch"],
+		"description": "Activates a GPIO output on a timer schedule",
 		"constructor": 
 		[
 			[
