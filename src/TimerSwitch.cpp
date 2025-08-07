@@ -74,7 +74,7 @@ bool TimerSwitch::setConfig(String config, bool save) {
 		off_hour = timer_config.offTime.substring(0, timer_config.offTime.indexOf(':')).toInt();
 		off_minute = timer_config.offTime.substring(timer_config.offTime.indexOf(':') + 1).toInt();
 		if (save) {
-			if (!saveConfig(config_path, getConfig())) {
+			if (!saveConfig(config_path, config)) {
 				return false;
 			}
 		}
